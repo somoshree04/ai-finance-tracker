@@ -1,0 +1,18 @@
+# Local virtual environment
+venv/
+
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables (security)
+.env
+
+# User-specific VS Code settings
+.vscode/
+
+#  OS Specific Files
+.DS_Store
+Thumbs.db
