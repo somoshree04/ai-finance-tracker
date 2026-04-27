@@ -8,6 +8,7 @@ class ExpenseBase(BaseModel):
     description:str
 
 class ExpenseCreate(ExpenseBase):
+
     pass #frontend sees while creating a new expense
 
 class Expense(ExpenseBase):
@@ -15,8 +16,7 @@ class Expense(ExpenseBase):
     owner_id:int
     is_anomaly:bool
     timestamp:datetime
-
-class config:
+class Config:
     from_attributes=True
 
 
@@ -30,6 +30,5 @@ class UserCreate(UserBase):
 class User(UserBase):
     id:int
     expenses:List[Expense]=[]
-
-class config:
+class Config:
     from_attributes=True
