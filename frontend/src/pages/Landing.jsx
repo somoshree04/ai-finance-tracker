@@ -9,7 +9,7 @@ const Landing = () => {
       <nav className="flex justify-between items-center p-6 max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-slate-900">FiscalGuard</h1>
         <div className="space-x-4">
-          <Link to="/login" className="text-slate-600 hover:text-slate-900 font-medium">Sign in</Link>
+          <Link to="/login" className="text-slate-600 hover:text-slate-900 font-medium">Log in</Link>
           <Link to="/login" className="bg-blue-600 text-white px-6 py-2 rounded-full font-medium">Sign up</Link>
         </div>
       </nav>
