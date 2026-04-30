@@ -1,11 +1,27 @@
+import sys
+import os
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
+from fastapi.middleware.cors import CORSMiddleware
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
 import models, schemas, database
-from ml_logic.model import predict_anomaly
+import ml_logic.model as ml
 
 models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 CATEGORY_MAP = {
     "Rent": 8,
@@ -41,7 +57,7 @@ def create_expense_for_user(
     # If the category is unknown, we default to 7 (Miscellaneous)
     cat_id = CATEGORY_MAP.get(expense.category, 7)
 
-    is_anomaly_detected = predict_anomaly(expense.amount, cat_id)
+    is_anomaly_detected = ml.predict_anomaly(expense.amount, cat_id)
 
     db_expense = models.Expense(
         **expense.model_dump(),

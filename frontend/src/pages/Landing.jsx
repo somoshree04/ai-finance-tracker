@@ -9,8 +9,8 @@ const Landing = () => {
       <nav className="flex justify-between items-center p-6 max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-slate-900">FiscalGuard</h1>
         <div className="space-x-4">
-          <Link to="/login" className="text-slate-600 hover:text-slate-900 font-medium">Log in</Link>
-          <Link to="/login" className="bg-blue-600 text-white px-6 py-2 rounded-full font-medium">Sign up</Link>
+          <Link to="/Login" className="text-slate-600 hover:text-slate-900 font-medium">Log in</Link>
+          <Link to="/Signup" className="bg-blue-600 text-white px-6 py-2 rounded-full font-medium">Sign up</Link>
         </div>
       </nav>
 
@@ -24,7 +24,7 @@ const Landing = () => {
           <p className="text-slate-500 mt-6 text-lg max-w-md">
            FiscalGuard uses AI to watch your transactions 24/7. We'll alert you the moment your spending patterns look dangerous.
           </p>
-          <Link to="/login">
+          <Link to="/Signup">
              <button className="mt-10 bg-blue-600 text-white px-10 py-4 rounded-full text-lg font-bold shadow-lg hover:bg-blue-700 transition-all">
                SIGN UP NOW
              </button>
