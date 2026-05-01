@@ -53,17 +53,15 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)
 def create_expense_for_user(
     user_id: int, expense: schemas.ExpenseCreate, db: Session = Depends(database.get_db)
 ):
-    
-    # If the category is unknown, we default to 7 (Miscellaneous)
     cat_id = CATEGORY_MAP.get(expense.category, 7)
 
     is_anomaly_detected = ml.predict_anomaly(expense.amount, cat_id)
 
     db_expense = models.Expense(
         **expense.model_dump(),
-          owner_id=user_id,
-          is_anomaly=is_anomaly_detected          
-          )
+        owner_id=user_id,
+        is_anomaly=is_anomaly_detected          
+    )
     db.add(db_expense)
     db.commit()
     db.refresh(db_expense)

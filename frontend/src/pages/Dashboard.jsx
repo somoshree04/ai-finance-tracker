@@ -41,13 +41,13 @@ const Dashboard = () => {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* ADD EXPENSE FORM */}
+        {/*  EXPENSE FORM */}
         <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800">
           <h2 className="text-xl mb-4 font-semibold">Log New Expense</h2>
           <form onSubmit={handleAddExpense} className="space-y-4">
             <input 
               type="number" 
-              placeholder="Amount ($)" 
+              placeholder="Amount (₹)"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="w-full bg-slate-800 border border-slate-700 p-3 rounded-lg outline-none focus:ring-2 focus:ring-cyan-500 text-white"
@@ -79,7 +79,8 @@ const Dashboard = () => {
           ) : (
             <div className={`p-6 rounded-xl border ${analysisResult.is_anomaly ? 'bg-red-900/20 border-red-500/50' : 'bg-emerald-900/20 border-emerald-500/50'}`}>
               <div className="flex justify-between items-center mb-4">
-                <span className="text-lg font-medium">Result for: ${analysisResult.amount} ({analysisResult.category})</span>
+                {/* CHANGED: $ replaced with ₹ for the result display */}
+                <span className="text-lg font-medium">Result for: ₹{analysisResult.amount} ({analysisResult.category})</span>
                 <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${analysisResult.is_anomaly ? 'bg-red-500 text-white' : 'bg-emerald-500 text-white'}`}>
                   {analysisResult.is_anomaly ? 'Anomaly' : 'Normal'}
                 </span>
@@ -87,8 +88,8 @@ const Dashboard = () => {
               
               <p className="text-slate-300">
                 {analysisResult.is_anomaly 
-                  ? " This transaction deviates significantly from typical spending patterns. We recommend reviewing this expense."
-                  : "This transaction aligns with your normal spending history. No unusual activity detected."}
+                  ? "🚨 This transaction deviates significantly from typical spending patterns. We recommend reviewing this expense."
+                  : "✅ This transaction aligns with your normal spending history. No unusual activity detected."}
               </p>
             </div>
           )}
