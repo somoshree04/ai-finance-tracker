@@ -8,6 +8,11 @@ const Dashboard = () => {
 
   const handleAddExpense = async (e) => {
     e.preventDefault();
+
+    const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    const apiUrl = `${import.meta.env.VITE_API_URL}/users/1/expenses/`;
+    console.log("Requesting:", apiUrl);
+
     const expenseData = {
       amount: parseFloat(amount),
       category: category,
@@ -15,11 +20,15 @@ const Dashboard = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:8000/users/1/expenses/', {
-        method: 'POST',
+          const response = await fetch(apiUrl, {
+          method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(expenseData),
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const result = await response.json();
       
@@ -57,10 +66,13 @@ const Dashboard = () => {
               onChange={(e) => setCategory(e.target.value)}
               className="w-full bg-slate-800 border border-slate-700 p-3 rounded-lg outline-none text-white"
             >
-              <option>Food</option>
-              <option>Rent</option>
-              <option>Entertainment</option>
-              <option>Subscription</option>
+             <option value="Eating_Out">Eating Out</option>
+              <option value="Groceries">Groceries</option>
+              <option value="Rent">Rent</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Transport">Transport</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Utilities">Utilities</option>
             </select>
             <button className="w-full bg-cyan-600 py-3 rounded-lg font-bold hover:bg-cyan-500 transition-all">
               Analyze with AI
@@ -79,7 +91,6 @@ const Dashboard = () => {
           ) : (
             <div className={`p-6 rounded-xl border ${analysisResult.is_anomaly ? 'bg-red-900/20 border-red-500/50' : 'bg-emerald-900/20 border-emerald-500/50'}`}>
               <div className="flex justify-between items-center mb-4">
-                {/* CHANGED: $ replaced with ₹ for the result display */}
                 <span className="text-lg font-medium">Result for: ₹{analysisResult.amount} ({analysisResult.category})</span>
                 <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${analysisResult.is_anomaly ? 'bg-red-500 text-white' : 'bg-emerald-500 text-white'}`}>
                   {analysisResult.is_anomaly ? 'Anomaly' : 'Normal'}
