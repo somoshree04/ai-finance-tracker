@@ -71,3 +71,16 @@ def create_expense_for_user(
     db.commit()
     db.refresh(db_expense)
     return db_expense
+
+@app.get("/users/{user_id}/expenses/", response_model=list[schemas.Expense])
+def get_expenses_for_user(
+    user_id: int, db: Session = Depends(database.get_db)
+):
+    expenses = db.query(models.Expense).filter(models.Expense.owner_id == user_id).all()
+    
+    if not expenses:
+        # Returning an empty list if no expenses are found than an error 
+        # so the frontend can still display a "No Transactions" message.
+        return []
+        
+    return expenses
