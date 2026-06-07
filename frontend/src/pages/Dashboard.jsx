@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
 const Dashboard = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [expenses, setExpenses] = useState([]);
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('Eating_Out'); 
@@ -24,8 +25,10 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchHistory();
-  }, []);
+    if (isLoggedIn) {
+      fetchHistory();
+    }
+  }, [isLoggedIn]);
 
   const handleAddExpense = async (e) => {
     e.preventDefault();
@@ -36,6 +39,7 @@ const Dashboard = () => {
       category: category,
       description: "Manual entry"
     };
+
 
     try {
       const response = await fetch(apiUrl, {
@@ -54,8 +58,13 @@ const Dashboard = () => {
       console.error("Error logging expense:", error);
     }
   };
-
-  // --- MATH LOGIC ---
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setExpenses([]);
+    setAmount('');
+    setAnalysisResult(null);
+  };
+  
   // --- MATH LOGIC ---
   const today = new Date().toISOString().split('T')[0];
   const currentMonth = new Date().toISOString().slice(0, 7);
@@ -89,14 +98,43 @@ const Dashboard = () => {
 
   const COLORS = ['#22d3ee', '#818cf8', '#f472b6', '#fbbf24', '#34d399', '#f87171'];
 
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6">
+        <div className="max-w-md text-center space-y-6 bg-slate-900/50 border border-slate-800 p-10 rounded-3xl backdrop-blur-md shadow-2xl">
+          <div className="h-16 w-16 bg-gradient-to-tr from-cyan-500 to-indigo-500 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-cyan-500/20">
+            <span className="text-2xl font-black text-slate-950">FG</span>
+          </div>
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent">
+            FiscalGuard
+          </h1>
+          <p className="text-slate-400 text-sm leading-relaxed">
+            An intelligent financial monitoring application powered by machine learning anomaly detection pipelines.
+          </p>
+          <button 
+            onClick={() => setIsLoggedIn(true)}
+            className="w-full bg-gradient-to-r from-cyan-600 to-indigo-600 text-white py-3.5 rounded-xl font-bold hover:from-cyan-500 hover:to-indigo-500 shadow-xl shadow-cyan-950/30 transition-all transform active:scale-98"
+          >
+            Access Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 text-white p-8">
       <header className="flex justify-between items-center mb-10">
         <h1 className="text-3xl font-bold text-cyan-400">FiscalGuard Dashboard</h1>
-        <button className="bg-red-500/10 text-red-400 px-4 py-2 rounded-lg hover:bg-red-500/30">Logout</button>
+        {/* FIXED: Hooked up onClick event trigger */}
+        <button 
+          onClick={handleLogout}
+          className="bg-red-500/10 text-red-400 px-4 py-2 rounded-lg border border-red-500/20 hover:bg-red-500/20 transition-colors"
+        >
+          Logout
+        </button>
       </header>
 
-      {/* NEW: Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 border-l-4 border-l-cyan-500">
           <p className="text-slate-400 text-xs uppercase font-bold">Today's Total</p>
@@ -109,10 +147,8 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-      {/* LEFT COLUMN: INPUT FORM */}
         <div className="space-y-8">
-        <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-lg">
+          <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-lg">
             <h2 className="text-xl mb-4 font-semibold">Log New Expense</h2>
             <form onSubmit={handleAddExpense} className="space-y-4">
               <div className="space-y-2">
@@ -147,7 +183,6 @@ const Dashboard = () => {
             </form>
           </div>
 
-          {/* AI GUARD STATUS */}
           <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-lg">
             <h2 className="text-xl mb-4 font-semibold text-cyan-400">AI Guard Result</h2>
             {!analysisResult ? (
@@ -170,7 +205,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* MIDDLE COLUMN: VISUALIZATION */}
         <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-lg min-h-[400px]">
           <h2 className="text-xl mb-4 font-semibold text-cyan-400 text-center">Category Breakdown</h2>
           {expenses.length === 0 ? (
@@ -201,7 +235,6 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* RIGHT COLUMN: HISTORY */}
         <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-lg">
           <h2 className="text-xl mb-4 font-semibold text-slate-400">Transaction History</h2>
           <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
