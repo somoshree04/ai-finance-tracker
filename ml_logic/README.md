@@ -1,5 +1,5 @@
 
-# 🧠 ML Logic Subsystem (`/ml_logic`)
+# 🧠 ML Architecture  
 
 The analytical intelligence layer of the application. It transforms raw, wide-format personal finance data into processable transactional records and evaluates incoming transactions in real time to flag anomalous spending patterns.
 
