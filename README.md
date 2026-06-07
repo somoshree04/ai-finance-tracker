@@ -1,60 +1,104 @@
-📊 AI-Powered Finance Tracker
-A Full-Stack Anomaly Detection System for Personal Finance
+# 🛡️ FiscalGuard — AI-Powered Finance Tracker
 
-🚀 Project Overview
-The AI Finance Tracker is a professional-grade web application designed to help users track expenses while leveraging Machine Learning to identify unusual spending patterns. Unlike traditional trackers, this system uses an Isolation Forest model to flag "anomalies"—transactions that deviate significantly from the user's historical data or typical spending behavior (e.g., a ₹5,000 dinner when the average is ₹500).
+An intelligent, full-stack financial tracking application that processes, classifies, and audits user transactions in real time. FiscalGuard pairs an unsupervised anomaly detection model with an async relational database and a modern dashboard to instantly flag erratic spending behavior.
 
-🛠️ Technical Architecture
-The Stack
-Frontend: React.js (Vite), Tailwind CSS, Lucide Icons, Axios.
+---
 
-Backend: FastAPI (Python), Uvicorn, SQLAlchemy.
+## 🏛️ Architecture
 
-Database: SQLite (Relational storage for users and expenses).
+```
+                     ┌────────────────────────────────────────┐
+                     │          React Dashboard UI            │
+                     │  (Vite, Tailwind CSS, Glassmorphism)   │
+                     └───────────────────┬────────────────────┘
+                                         │
+                                         ▼ (Async JSON REST API)
+                     ┌────────────────────────────────────────┐
+                     │           FastAPI Application          │
+                     │     (Uvicorn ASGI, Pydantic Schema)    │
+                     └───────────────────┬────────────────────┘
+                                         │
+               ┌─────────────────────────┴─────────────────────────┐
+               ▼ (Real-time Inference)                             ▼ (ORM Mapping)
+ ┌────────────────────────────────────────┐          ┌────────────────────────────────────────┐
+ │           ML Inference Engine          │          │             SQLAlchemy Core            │
+ │     (Isolation Forest Model (.pkl))    │          │     (Session Pooling, SQLite Engine)   │
+ └────────────────────────────────────────┘          └───────────────────┬────────────────────┘
+                                                                         │
+                                                                         ▼
+                                                     ┌────────────────────────────────────────┐
+                                                     │               finance.db               │
+                                                     │            (SQLite Storage)            │
+                                                     └────────────────────────────────────────┘
+```
 
-Machine Learning: Scikit-Learn (Isolation Forest), Pandas (Data preprocessing).
+---
 
-Security: JWT (JSON Web Tokens) for stateless authentication, Passlib (Bcrypt) for password hashing.
+## 🛠️ Tech Stack
 
-The Workflow
-Data Ingestion: The user enters an expense (Amount, Category, Description).
+| Layer | Technologies | Function |
+|---|---|---|
+| **Frontend** | React.js, Vite, Tailwind CSS, Axios | Real-time financial tracking dashboard with Glassmorphism styling |
+| **Backend** | FastAPI, Uvicorn, Pydantic, SQLAlchemy | Routes requests, validates payloads, and manages database sessions |
+| **Database** | SQLite3, SQLAlchemy ORM | Serverless relational storage for user and expense records |
+| **ML Engine** | Scikit-Learn, Pandas, NumPy, Joblib | Transforms dataset into transactional models and runs Isolation Forest inference |
 
-ML Analysis: The backend sends the transaction features to a pre-trained Isolation Forest model.
+---
 
-Anomaly Tagging: The model returns a prediction. If it's an outlier, it's flagged as is_anomaly = True.
+## 📁 Repository Structure
 
-Secure Storage: The transaction is saved to the SQLite database linked to the specific User ID.
+```
+ai-finance-tracker/
+├── README.md                 # You are here
+├── docker-compose.yml        # Multi-container build config
+├── data/
+│   └── data.csv              # Indian Personal Finance dataset (Kaggle)
+│
+├── ml_logic/                 # ML package
+│   ├── __init__.py
+│   ├── data_conv.py          # Wide-to-long data pipeline & label encoding
+│   └── model.py              # Isolation Forest inference
+│
+├── backend/                  # API server
+│   ├── main.py               # Router, CORS config, and ML gateway
+│   ├── models.py             # Database table definitions
+│   ├── schemas.py            # Pydantic validation schemas
+│   ├── database.py           # DB connection factory
+│   └── requirements.txt      # Python dependencies
+│
+└── frontend/                 # React client
+    ├── src/                  # Components, hooks, and views
+    ├── .env                  # API base URL config
+    ├── package.json          # Node dependencies
+    └── vite.config.js        # Vite build config
+```
 
-UI Feedback: The React frontend fetches the data and uses Conditional Rendering to highlight suspicious transactions in red.
+---
 
-🗺️ Development Roadmap (The Sprints)
-Sprint 1: Core API & Database (The Foundation)
-Initialize FastAPI and SQLite.
-Implement CRUD operations for expenses.
-Deliverable: Functional API documentation via Swagger UI (/docs).
+## 🔄 Transaction Pipeline
 
-Sprint 2: Machine Learning Integration (The Brain)
-Preprocess Kaggle financial datasets (Currency conversion: USD ⮕ INR).
-Train the Isolation Forest model on spending patterns.
-Integrate the model into the POST /expenses route to provide real-time flagging.
-Deliverable: A "Smart" backend that predicts anomalies.
+1. **Ingest** — The user submits a transaction via the React dashboard (e.g., $5,000 on Groceries).
+2. **Validate** — Axios sends the payload to `/users/{user_id}/expenses/`. FastAPI verifies it against the `ExpenseCreate` Pydantic schema.
+3. **ML Inference** — `main.py` maps the category string to its numeric index via `CATEGORY_MAP` (e.g., `Groceries → 3`) and forwards the amount and index to `ml_logic.model.predict_anomaly()`. The Isolation Forest evaluates the input against its trained baseline — outliers return `-1`, setting `is_anomaly=True`.
+4. **Write** — The full record, including the anomaly flag, is committed to `finance.db` via SQLAlchemy.
+5. **Update** — The response is returned to the dashboard, which immediately surfaces a visual alert if an anomaly was detected.
 
-Sprint 3: Security & User Management (The Vault)
-Implement User Registration and Login.
-Set up JWT-based authentication.Protect routes so users can only access their own financial data.Deliverable: A secure, multi-user system.
+---
 
-Sprint 4: Frontend Development (The Face)
+## 🚀 Running Locally
 
-Build a responsive Dashboard using React and Tailwind.
-Implement data visualization (Expense lists and anomaly alerts).
-Connect the UI to the API using Axios interceptors (for JWT handling).
-Deliverable: A polished, "Internship-Ready" Full-Stack application.
+Spin up two terminal sessions from the project root:
 
-📊 Database Schema Table Columns Usersid, username, email, hashed_passwordExpensesid, user_id, amount, category, description, timestamp, is_anomaly
+**Terminal 1 — Backend**
+```bash
+uvicorn backend.main:app --reload --port 8000
+```
+Swagger UI available at [http://localhost:8000/docs](http://localhost:8000/docs)
 
-
-💡 Key Portfolio HighlightsUnsupervised Learning: Using Isolation Forest for real-world outlier detection.Security Best Practices: Implementing industry-standard JWT and password hashing.Scalable Code: Organized directory structure separating ML logic, API routes, and Database models.
-
-Dependencies installed:
-
-backend:pip install fastapi uvicorn sqlalchemy passlib[bcrypt] pyjwt scikit-learn pandas
+**Terminal 2 — Frontend**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+App available at [http://localhost:5173](http://localhost:5173)
