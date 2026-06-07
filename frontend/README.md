@@ -1,4 +1,4 @@
-# 🎨 Frontend UI Subsystem (`/frontend`)
+#  Frontend system
 
 The user interface layer for the AI-Powered Finance Tracker (FiscalGuard). Built using React and compiled via Vite, this dashboard presents users with clean financial metrics, interactive charts, real-time transaction logging, and explicit visual alerts whenever the backend ML model catches an anomalous expense.
 
