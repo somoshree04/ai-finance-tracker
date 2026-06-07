@@ -1,0 +1,37 @@
+
+
+version: '3.8'
+
+services:
+  # --- FASTAPI BACKEND SERVICE ---
+  backend:
+    build: 
+      context: ./backend 
+    ports:
+      - "8000:8000"  # Exposes FastAPI to local machine & frontend
+    volumes:
+      - ./backend:/app
+      - backend_db:/app/data  # Fixed indentation alignment
+    environment:
+      - ENV=development
+      - PYTHONPATH=/app       # Tells Python to treat /app as a root directory
+    restart: always
+
+  # --- REACT FRONTEND SERVICE ---
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules     # Prevents local node_modules from overriding container installation
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  backend_db:
