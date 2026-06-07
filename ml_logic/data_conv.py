@@ -2,7 +2,6 @@ import pandas as pd
 import os
 
 def prepare_data(csv_name="data.csv"):
-    # Everything from here down MUST be indented (pushed right)
     base_path = os.path.dirname(os.path.dirname(__file__))
     file_path = os.path.join(base_path, "data", csv_name)
     
