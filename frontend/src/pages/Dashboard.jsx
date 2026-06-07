@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
@@ -54,23 +56,33 @@ const Dashboard = () => {
   };
 
   // --- MATH LOGIC ---
+  // --- MATH LOGIC ---
   const today = new Date().toISOString().split('T')[0];
   const currentMonth = new Date().toISOString().slice(0, 7);
 
+  // Added safe check (item.timestamp && ...) to prevent crashes on null dates
   const dailyTotal = expenses
-    .filter(item => item.timestamp.startsWith(today))
+    .filter(item => item.timestamp && item.timestamp.startsWith(today))
     .reduce((sum, item) => sum + item.amount, 0);
 
   const monthlyTotal = expenses
-    .filter(item => item.timestamp.startsWith(currentMonth))
+    .filter(item => item.timestamp && item.timestamp.startsWith(currentMonth))
     .reduce((sum, item) => sum + item.amount, 0);
 
+  // Added safe check here as well to fix the white screen crash
+  const todaysExpenses = expenses.filter(item => item.timestamp && item.timestamp.startsWith(today));
+
   const chartData = Object.values(
-    expenses.reduce((acc, item) => {
-      if (!acc[item.category]) {
-        acc[item.category] = { name: item.category, value: 0 };
+    todaysExpenses.reduce((acc, item) => {
+      let unifiedCategory = item.category;
+      if (item.category === "Food" || item.category === "FOOD") {
+        unifiedCategory = "Eating_Out";
       }
-      acc[item.category].value += item.amount;
+
+      if (!acc[unifiedCategory]) {
+        acc[unifiedCategory] = { name: unifiedCategory, value: 0 };
+      }
+      acc[unifiedCategory].value += item.amount;
       return acc;
     }, {})
   );
