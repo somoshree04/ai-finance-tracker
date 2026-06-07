@@ -1,16 +1,42 @@
-# React + Vite
+# 🎨 Frontend UI Subsystem (`/frontend`)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The user interface layer for the AI-Powered Finance Tracker (FiscalGuard). Built using React and compiled via Vite, this dashboard presents users with clean financial metrics, interactive charts, real-time transaction logging, and explicit visual alerts whenever the backend ML model catches an anomalous expense.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ✨ Key Design & Tech Stack Features
 
-## React Compiler
+- **Glassmorphism Visual Styling** — A sleek modern UI utilizing translucent backgrounds, rich blurs, and crisp accent borders built natively through utility classes.
+- **Tailwind CSS Engine** — Fully responsive components that scale cleanly for tablet or mobile viewports.
+- **Axios Communications** — Asynchronous REST calls to your local or cloud-hosted FastAPI backend.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## ⚙️ Core Environment Configuration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The frontend maps its backend destination using an environment boundary file (`.env`), dynamically shifting between local testing and live production deployment.
+
+```
+# /frontend/.env
+VITE_API_URL=http://localhost:8000
+```
+
+> ⚠️ Ensure `.env` is listed in `.gitignore` so environment-specific ports don't overwrite server configs.
+
+---
+
+## 🛠️ Local Setup & Scripts
+
+Navigate to the frontend folder and run the standard Node commands:
+
+**1. Install dependencies**
+```bash
+npm install
+```
+
+**2. Launch dev server**
+```bash
+npm run dev
+```
+
+Once booted, the app will be available at `http://localhost:5173/` where you can log transactions, monitor spending, and track real-time anomaly scores.
